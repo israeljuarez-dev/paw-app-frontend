@@ -1,0 +1,48 @@
+<nav class="navbar">
+
+  <div class="logo">
+    <a routerLink="/">
+      Paw<span>Care</span>
+    </a>
+  </div>
+
+  <ul class="nav-links">
+
+    <li>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        Inicio
+      </a>
+    </li>
+
+    <li>
+      <a routerLink="/reservas" routerLinkActive="active">
+        Reservar
+      </a>
+    </li>
+
+    <li>
+      <a routerLink="/login" routerLinkActive="active">
+        Login
+      </a>
+    </li>
+
+    <li>
+      <a routerLink="/signin" routerLinkActive="active">
+        Registrarse
+      </a>
+    </li>
+
+  </ul>
+
+  <div class="auth-buttons">
+
+    <a routerLink="/login" class="btn secondary">
+      Login
+    </a>
+
+    <a routerLink="/signin" class="btn primary">
+      Registrarse
+    </a>
+
+  </div>
+</nav>
