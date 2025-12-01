@@ -1,0 +1,125 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  background: #fff;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2d4739;
+}
+.logo span {
+  color: #1ab1e4 ;
+}
+header nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #1e718b;
+  font-weight: bold;
+}
+
+header nav a:hover {
+  color: #1594be;
+}
+
+
+main {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+main h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+main p {
+  margin-bottom: 20px;
+  color: #555;
+}
+
+
+.reserva {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  border-left: 6px solid #1ab1e4;
+}
+
+.reserva h3 {
+  font-size: 20px;
+  color: #1e718b;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #1e718b;
+  padding-bottom: 5px;
+}
+
+.reserva h4 {
+  margin-top: 15px;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 16px;
+}
+
+.reserva ul {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+.reserva ul li {
+  margin-bottom: 5px;
+}
+
+
+button {
+  padding: 10px 20px;
+  background: #1ab1e4;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 40px;
+  margin-right: 10px;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #1594be;
+}
+
+
+.reserva p {
+  margin-top: 10px;
+  color: #666;
+  font-style: italic;
+}
+
+
+footer {
+  background: #0e3744;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}

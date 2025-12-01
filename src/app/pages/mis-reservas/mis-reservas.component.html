@@ -1,0 +1,44 @@
+<main>
+    <h2>Mis Reservas</h2>
+    <p>A continuación se muestran todas tus citas registradas.</p>
+
+    <div *ngFor="let reserva of reservas" class="reserva">
+        <h3>{{ reserva.tipo }}</h3>
+
+        <h4>Mascota</h4>
+        <ul>
+            <li><strong>Nombre:</strong> {{ reserva.mascota.nombre }}</li>
+            <li><strong>Especie:</strong> {{ reserva.mascota.especie }}</li>
+            <li><strong>Género:</strong> {{ reserva.mascota.genero }}</li>
+            <li><strong>Edad:</strong> {{ reserva.mascota.edad }}</li>
+        </ul>
+
+        <h4>Cliente</h4>
+        <ul>
+            <li><strong>Nombre:</strong> {{ reserva.cliente.nombre }}</li>
+            <li><strong>Apellido:</strong> {{ reserva.cliente.apellido }}</li>
+            <li><strong>DNI:</strong> {{ reserva.cliente.dni }}</li>
+            <li><strong>Teléfono:</strong> {{ reserva.cliente.telefono }}</li>
+        </ul>
+
+        <h4>Servicio Médico</h4>
+        <ul>
+            <li><strong>Especialidad:</strong> {{ reserva.servicioMedico.especialidad }}</li>
+            <li><strong>Descripción:</strong> {{ reserva.servicioMedico.descripcion }}</li>
+            <li><strong>Fecha:</strong> {{ reserva.servicioMedico.fecha }}</li>
+            <li>
+                <strong>Estado:</strong>
+                <span [style.color]="reserva.servicioMedico.estado === 'Pagado' ? '#28a745' : '#dc3545'">
+                    {{ reserva.servicioMedico.estado }}
+                </span>
+            </li>
+        </ul>
+
+        <ng-container *ngIf="reserva.tipo === 'Cita Programada'">
+            <button (click)="editarReserva(reserva)">Editar Reserva</button>
+            <button (click)="cancelarReserva(reserva)">Cancelar Reserva</button>
+        </ng-container>
+
+        <p *ngIf="reserva.tipo === 'Historial'"><em>Esta reserva ya no se puede modificar.</em></p>
+    </div>
+</main>
