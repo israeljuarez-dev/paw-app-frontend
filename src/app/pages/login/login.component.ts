@@ -17,6 +17,7 @@ import { LoginRequestDTO } from '../../models/auth.models';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [
     RouterLink,
     ReactiveFormsModule,
@@ -29,13 +30,13 @@ import { LoginRequestDTO } from '../../models/auth.models';
     MatIconModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private notification = inject(NotificationService);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly notification = inject(NotificationService);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -74,7 +75,7 @@ export class LoginComponent {
         let message = 'Ocurrió un error inesperado al iniciar sesión.';
         if (error.status === 401 || error.status === 403) {
           message = 'Credenciales incorrectas. Verifica tu correo y contraseña.';
-        } else if (error.error && error.error.message) {
+        } else if (error.error?.message) {
           message = error.error.message;
         }
 

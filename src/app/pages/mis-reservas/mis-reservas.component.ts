@@ -34,10 +34,11 @@ interface Reserva {
 }
 
 @Component({
-  selector: 'app-mis-reservas',
+  selector: 'mis-reservas',
   imports: [CommonModule],
+  standalone: true,
   templateUrl: './mis-reservas.component.html',
-  styleUrl: './mis-reservas.component.css'
+  styleUrls: ['./mis-reservas.component.css']
 })
 export class MisReservasComponent implements OnInit{
 
@@ -45,7 +46,7 @@ export class MisReservasComponent implements OnInit{
   reservas: Reserva[] = [];
 
   // URL base de tu API (ejemplo)
-  private apiUrl = 'https://tudominio.com/api/reservas';
+  private readonly apiUrl = 'https://tudominio.com/api/reservas';
 
   constructor() { }
 

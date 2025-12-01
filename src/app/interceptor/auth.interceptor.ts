@@ -1,6 +1,6 @@
 import { HttpContextToken, HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
@@ -20,6 +20,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (authService.isAuthenticated()) {
     const authRequest = addAuthorizationHeader(req, authService);
+    // Debugging: Log authorization header presence for troubleshooting 403 issues
+    const token = authService.getToken();
+    // eslint-disable-next-line no-console
+    console.debug('[authInterceptor] Adding token for request:', req.url, token ? 'TOKEN_PRESENT' : 'NO_TOKEN');
     return next(authRequest)
     .pipe(
       catchError((error: HttpErrorResponse) => {

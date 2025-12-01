@@ -3,8 +3,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
     <div class="flex justify-between items-center h-16 w-full ">
 
-      <!-- Logo -->
-      <div class="logo flex-shrink-0">
+            <div class="logo shrink-0">
         <a
           routerLink="/"
           class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors"
@@ -13,8 +12,7 @@
         </a>
       </div>
 
-      <!-- Navigation Links -->
-      <ul class="nav-links hidden md:flex space-x-8">
+            <ul class="nav-links hidden md:flex space-x-8">
         <li>
           <a
             routerLink="/"
@@ -36,6 +34,15 @@
         </li>
         <li>
           <a
+            routerLink="/mis-reservas"
+            routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
+            class="text-gray-700 hover:text-indigo-600 px-3 py-2 transition-colors font-medium"
+          >
+            Mis Citas
+          </a>
+        </li>
+                <li>
+          <a
             routerLink="/veterinary-services"
             routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
             class="text-gray-700 hover:text-indigo-600 px-3 py-2 transition-colors font-medium"
@@ -45,12 +52,10 @@
         </li>
       </ul>
 
-      <!-- Auth Buttons / User Menu -->
-      <div class="auth-buttons flex items-center space-x-4">
+            <div class="auth-buttons flex items-center space-x-4">
 
         @if (!isLoggedIn()) {
-          <!-- Botones cuando NO está logueado -->
-          <a
+                    <a
             routerLink="/login"
             class="btn secondary bg-transparent text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors font-medium"
           >
@@ -63,8 +68,7 @@
             Registrarse
           </a>
         } @else {
-          <!-- Menú de usuario cuando SÍ está logueado -->
-          <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-3">
             <span class="text-sm text-gray-700 hidden sm:block">
               Hola, {{ userEmail() }}
             </span>

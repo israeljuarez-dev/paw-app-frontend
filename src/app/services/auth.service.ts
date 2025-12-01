@@ -12,12 +12,12 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private storage = inject(UserStorageService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly http = inject(HttpClient);
+  private readonly storage = inject(UserStorageService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
-  private apiUrl = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl;
 
   login(credentials: LoginRequestDTO): Observable<LoginResponseDTO> {
     return this.http.post<LoginResponseDTO>(`${this.apiUrl}/auth/login`, credentials)
@@ -55,4 +55,46 @@ export class AuthService {
     getToken(): string | null {
     return this.storage.getToken();
   }
+
+    /**
+     * Attempt to decode the JWT and return the payload object.
+     * Returns null if token is absent or cannot be decoded.
+     */
+    public decodeToken(): Record<string, unknown> | null {
+      const token = this.getToken();
+      if (!token) return null;
+      try {
+        const parts = token.split('.');
+        if (parts.length < 2) return null;
+        const payload = parts[1];
+        const normalized = payload.replaceAll('-', '+').replaceAll('_', '/');
+        const json = atob(normalized);
+        return JSON.parse(json);
+      } catch (e) {
+        // Not a JWT or invalid base64 — log and return null for debugging
+        // eslint-disable-next-line no-console
+        console.debug('[AuthService] Failed to decode token', e);
+        return null;
+      }
+    }
+
+    /**
+     * Try to get a numeric/string user id from the decoded token or saved user.
+     */
+    public getUserId(): number | string | null {
+      const user = this.getCurrentUser();
+      if (user && (user.id || user.userId || user.sub)) {
+        return user.id ?? user.userId ?? user.sub;
+      }
+      const decoded = this.decodeToken();
+      if (!decoded) return null;
+      // Try common claim names
+      const sub = decoded['sub'];
+      if (typeof sub === 'string' || typeof sub === 'number') return sub;
+      const id = decoded['id'];
+      if (typeof id === 'string' || typeof id === 'number') return id;
+      const userId = decoded['userId'];
+      if (typeof userId === 'string' || typeof userId === 'number') return userId;
+      return null;
+    }
 }

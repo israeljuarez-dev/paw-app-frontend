@@ -1,5 +1,5 @@
 // src/app/components/navbar/navbar.component.ts
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -24,9 +24,9 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
-  private router = inject(Router);
-  private authService = inject(AuthService);
+export class NavbarComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   isLoggedIn = signal(false);
   userEmail = signal('');

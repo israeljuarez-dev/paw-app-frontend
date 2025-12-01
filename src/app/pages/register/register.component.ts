@@ -8,16 +8,17 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
   // Inyección de dependencias
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
   // Signals para estado reactivo
   loading = signal(false);
@@ -82,9 +83,9 @@ export class RegisterComponent {
           message = 'Los datos proporcionados no son válidos.';
         } else if (error.status === 409) {
           message = 'El correo electrónico ya está registrado.';
-        } else if (error.error && error.error.message) {
+        } else if (error.error?.message) {
           message = error.error.message;
-        } else if (error.error && error.error.details) {
+        } else if (error.error?.details) {
           // Si el backend devuelve detalles de validación
           message = error.error.details.join(', ');
         }
