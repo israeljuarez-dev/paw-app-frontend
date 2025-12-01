@@ -1,25 +1,170 @@
+<!-- src/app/pages/register/register.component.html -->
 <section class="login-section">
   <div class="login-container">
     <h2>Crear Cuenta</h2>
-    <form class="login-form" action="#" method="post">
+
+    <!-- Mostrar mensajes de error -->
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form
+      class="login-form"
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+    >
+
       <div class="form-group">
         <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
+        <input
+          type="text"
+          id="nombre"
+          formControlName="nombre"
+          placeholder="Ingresa tu nombre"
+          [class.invalid]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched"
+          required
+        >
+        @if (registerForm.get('nombre')?.invalid && (registerForm.get('nombre')?.dirty || registerForm.get('nombre')?.touched)) {
+          <div class="validation-error">
+            @if (registerForm.get('nombre')?.errors?.['required']) {
+              <span>El nombre es obligatorio.</span>
+            }
+            @if (registerForm.get('nombre')?.errors?.['minlength']) {
+              <span>El nombre debe tener al menos 2 caracteres.</span>
+            }
+          </div>
+        }
       </div>
+
       <div class="form-group">
         <label for="apellido">Apellido</label>
-        <input type="text" id="apellido" name="apellido" placeholder="Ingresa tu apellido" required>
+        <input
+          type="text"
+          id="apellido"
+          formControlName="apellido"
+          placeholder="Ingresa tu apellido"
+          [class.invalid]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched"
+          required
+        >
+        @if (registerForm.get('apellido')?.invalid && (registerForm.get('apellido')?.dirty || registerForm.get('apellido')?.touched)) {
+          <div class="validation-error">
+            @if (registerForm.get('apellido')?.errors?.['required']) {
+              <span>El apellido es obligatorio.</span>
+            }
+            @if (registerForm.get('apellido')?.errors?.['minlength']) {
+              <span>El apellido debe tener al menos 2 caracteres.</span>
+            }
+          </div>
+        }
       </div>
+
       <div class="form-group">
         <label for="email">Correo electrónico</label>
-        <input type="email" id="email" name="email" placeholder="Ingresa tu correo" required>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="Ingresa tu correo"
+          [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          required
+        >
+        @if (registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)) {
+          <div class="validation-error">
+            @if (registerForm.get('email')?.errors?.['required']) {
+              <span>El correo es obligatorio.</span>
+            }
+            @if (registerForm.get('email')?.errors?.['email']) {
+              <span>El formato del correo no es válido.</span>
+            }
+          </div>
+        }
       </div>
+
+      <!-- Agrega esto en el formulario después del campo email -->
+<div class="form-group">
+  <label for="dni">DNI</label>
+  <input
+    type="text"
+    id="dni"
+    formControlName="dni"
+    placeholder="Ingresa tu DNI"
+    [class.invalid]="registerForm.get('dni')?.invalid && registerForm.get('dni')?.touched"
+    required
+  >
+  @if (registerForm.get('dni')?.invalid && (registerForm.get('dni')?.dirty || registerForm.get('dni')?.touched)) {
+    <div class="validation-error">
+      @if (registerForm.get('dni')?.errors?.['required']) {
+        <span>El DNI es obligatorio.</span>
+      }
+      @if (registerForm.get('dni')?.errors?.['pattern']) {
+        <span>El DNI debe tener 8 dígitos.</span>
+      }
+    </div>
+  }
+</div>
+
+<div class="form-group">
+  <label for="phone_number">Teléfono</label>
+  <input
+    type="tel"
+    id="phone_number"
+    formControlName="phone_number"
+    placeholder="Ingresa tu teléfono"
+    [class.invalid]="registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched"
+    required
+  >
+  @if (registerForm.get('phone_number')?.invalid && (registerForm.get('phone_number')?.dirty || registerForm.get('phone_number')?.touched)) {
+    <div class="validation-error">
+      @if (registerForm.get('phone_number')?.errors?.['required']) {
+        <span>El teléfono es obligatorio.</span>
+      }
+      @if (registerForm.get('phone_number')?.errors?.['pattern']) {
+        <span>El teléfono debe tener 9 dígitos.</span>
+      }
+    </div>
+  }
+</div>
+
       <div class="form-group">
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" placeholder="Crea una contraseña" required>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="Crea una contraseña"
+          [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          required
+        >
+        @if (registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)) {
+          <div class="validation-error">
+            @if (registerForm.get('password')?.errors?.['required']) {
+              <span>La contraseña es obligatoria.</span>
+            }
+            @if (registerForm.get('password')?.errors?.['minlength']) {
+              <span>La contraseña debe tener al menos 6 caracteres.</span>
+            }
+          </div>
+        }
       </div>
-      <button type="submit" class="btn primary">Registrarse</button>
-      <p class="register-link">¿Ya tienes una cuenta? <a routerLink="login">Inicia sesión aquí</a></p>
+
+      <button
+        type="submit"
+        class="btn primary"
+        [disabled]="registerForm.invalid || loading()"
+      >
+        @if (loading()) {
+          <span>Registrando...</span>
+        } @else {
+          <span>Registrarse</span>
+        }
+      </button>
+
+      <p class="register-link">
+        ¿Ya tienes una cuenta?
+        <a routerLink="/login">Inicia sesión aquí</a>
+      </p>
     </form>
   </div>
 </section>

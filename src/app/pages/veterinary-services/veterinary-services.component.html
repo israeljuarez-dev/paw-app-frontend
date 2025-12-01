@@ -1,0 +1,224 @@
+<!-- src/app/pages/veterinary-services/veterinary-services.component.html -->
+<div class="container mx-auto px-4 py-8">
+  <!-- Título y descripción -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Gestión de Servicios Veterinarios</h1>
+    <p class="text-gray-600">Administra los servicios que ofrece tu clínica veterinaria.</p>
+  </div>
+
+  <!-- Formulario para crear servicio -->
+  <mat-card class="mb-8 shadow-lg" id="service-form">
+    <mat-card-header class="bg-indigo-50 rounded-t-lg">
+      <mat-card-title class="text-xl font-semibold text-indigo-800">
+        {{ serviceForm.value.name ? 'Editar Servicio' : 'Nuevo Servicio Veterinario' }}
+      </mat-card-title>
+      <mat-card-subtitle class="text-gray-600">
+        Completa los datos del servicio
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="p-6">
+      <form [formGroup]="serviceForm" (ngSubmit)="onCreateService()" class="space-y-4">
+
+        <!-- Nombre del servicio -->
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Nombre del Servicio</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            placeholder="Ej: Consulta General, Vacunación, Cirugía"
+          >
+          <mat-icon matPrefix>medical_services</mat-icon>
+          <mat-error *ngIf="serviceForm.get('name')?.errors?.['required']">
+            El nombre es obligatorio
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('name')?.errors?.['minlength']">
+            Mínimo 3 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Descripción -->
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            placeholder="Describe el servicio en detalle..."
+            rows="3"
+          ></textarea>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-error *ngIf="serviceForm.get('description')?.errors?.['required']">
+            La descripción es obligatoria
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('description')?.errors?.['minlength']">
+            Mínimo 10 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Precio -->
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Precio (S/)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="price"
+            placeholder="Ej: 45.50"
+            step="0.01"
+            min="0"
+          >
+          <mat-icon matPrefix>attach_money</mat-icon>
+          <mat-error *ngIf="serviceForm.get('price')?.errors?.['required']">
+            El precio es obligatorio
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('price')?.errors?.['min']">
+            El precio debe ser mayor a 0
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Botones de acción -->
+        <div class="flex justify-end space-x-3 pt-4">
+          <button
+            mat-stroked-button
+            type="button"
+            color="warn"
+            (click)="clearForm()"
+            [disabled]="loading()"
+          >
+            <mat-icon>clear</mat-icon>
+            Limpiar
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+          >
+            <div class="flex items-center">
+              @if (loading()) {
+                <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+              } @else {
+                <mat-icon class="mr-2">{{ serviceForm.value.name ? 'save' : 'add' }}</mat-icon>
+              }
+              <span>{{ serviceForm.value.name ? 'Actualizar' : 'Crear' }} Servicio</span>
+            </div>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Lista de servicios -->
+  <mat-card class="shadow-lg">
+    <mat-card-header class="bg-gray-50 rounded-t-lg">
+      <mat-card-title class="text-xl font-semibold text-gray-800">
+        Servicios Registrados
+      </mat-card-title>
+      <mat-card-subtitle class="text-gray-600">
+        Total: {{ services().length }} servicios
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="p-0">
+      <!-- Loading spinner -->
+      @if (loadingServices()) {
+        <div class="flex justify-center items-center p-12">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+
+      <!-- Tabla de servicios -->
+      @if (!loadingServices()) {
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="services()" class="w-full">
+
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let service" class="font-medium text-gray-700">
+                {{ service.id }}
+              </td>
+            </ng-container>
+
+            <!-- Nombre Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let service" class="font-medium">
+                {{ service.name }}
+              </td>
+            </ng-container>
+
+            <!-- Descripción Column -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Descripción</th>
+              <td mat-cell *matCellDef="let service" class="text-gray-600">
+                {{ service.description }}
+              </td>
+            </ng-container>
+
+            <!-- Precio Column -->
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Precio (S/)</th>
+              <td mat-cell *matCellDef="let service" class="font-bold text-green-600">
+                S/ {{ service.price | number:'1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Acciones Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="text-right">Acciones</th>
+              <td mat-cell *matCellDef="let service" class="text-right">
+                <div class="flex justify-end space-x-2">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="onEditService(service)"
+                    matTooltip="Editar servicio"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="onDeleteService(service.id)"
+                    matTooltip="Eliminar servicio"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Header y body de la tabla -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <!-- Mensaje cuando no hay servicios -->
+          @if (services().length === 0) {
+            <div class="text-center py-12 text-gray-500">
+              <mat-icon class="text-4xl mb-4">pets</mat-icon>
+              <p class="text-lg">No hay servicios registrados</p>
+              <p class="text-sm">Comienza creando tu primer servicio veterinario</p>
+            </div>
+          }
+        </div>
+
+        <!-- Paginación -->
+        @if (services().length > 0) {
+          <div class="border-t border-gray-200">
+            <mat-paginator
+              [length]="totalServices()"
+              [pageSize]="pageSize()"
+              [pageSizeOptions]="pageSizeOptions"
+              [pageIndex]="pageIndex()"
+              (page)="onPageChange($event)"
+              aria-label="Seleccionar página"
+            >
+            </mat-paginator>
+          </div>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,82 +1,90 @@
+// src/app/pages/login/login.component.ts
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, Router } from "@angular/router";
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'; // Módulos para formularios reactivos
-import { AuthService } from '../services/auth.service'; // Importamos el servicio
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NotificationService } from '../../services/notification.service';
+
+// Angular Material imports
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { LoginRequestDTO } from '../../models/auth.models';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    // Angular Material modules
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatIconModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  // Inyección de dependencias moderna
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private notification = inject(NotificationService);
 
-  // Signals para manejar el estado reactivo
   loading = signal(false);
   errorMessage = signal<string | null>(null);
+  hidePassword = signal(true);
 
-  // Definición del FormGroup con validadores
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  constructor() {
-    // Es buena práctica asegurarse de que HttpClientModule esté importado en tu app.config.ts
+  togglePasswordVisibility(): void {
+    this.hidePassword.set(!this.hidePassword());
   }
 
-  /**
-   * Maneja el envío del formulario de inicio de sesión.
-   */
   onSubmit(): void {
-    this.errorMessage.set(null); // Limpiar errores previos
+    this.errorMessage.set(null);
 
     if (this.loginForm.invalid) {
-      // Marcar todos los campos como tocados para mostrar mensajes de error
       this.loginForm.markAllAsTouched();
-      this.errorMessage.set('Por favor, completa correctamente todos los campos.');
+      this.notification.showError('Por favor, completa correctamente todos los campos.');
       return;
     }
 
     this.loading.set(true);
-    const requestData = this.loginForm.value as { email: string; password: string };
 
-    this.authService.login(requestData)
-      .subscribe({
-        next: (response) => {
-          // Éxito:
-          console.log('Login exitoso:', response);
+    const requestData = this.loginForm.value as LoginRequestDTO;
 
-          // 1. Guardar el token (ejemplo)
-          localStorage.setItem('auth_token', response.token);
+    this.authService.login(requestData).subscribe({
+      next: (response) => {
+        console.log('Login exitoso:', response);
+        this.router.navigate(['/']);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error de login:', error);
 
-          // 2. Redirigir al usuario (ejemplo a una ruta protegida)
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error: HttpErrorResponse) => {
-          // Error:
-          console.error('Error de login:', error);
-          let message = 'Ocurrió un error inesperado al iniciar sesión.';
-
-          // Manejo específico del error del backend (adaptar según tu API)
-          if (error.status === 401 || error.status === 403) {
-             message = 'Credenciales incorrectas. Verifica tu correo y contraseña.';
-          } else if (error.error && error.error.message) {
-             message = error.error.message;
-          }
-
-          this.errorMessage.set(message);
-          this.loading.set(false);
-        },
-        complete: () => {
-          // Se ejecuta siempre al finalizar (éxito o error)
-          this.loading.set(false);
+        let message = 'Ocurrió un error inesperado al iniciar sesión.';
+        if (error.status === 401 || error.status === 403) {
+          message = 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+        } else if (error.error && error.error.message) {
+          message = error.error.message;
         }
-      });
+
+        this.errorMessage.set(message);
+        this.notification.showError(message);
+        this.loading.set(false);
+      },
+      complete: () => {
+        this.loading.set(false);
+      }
+    });
   }
 }

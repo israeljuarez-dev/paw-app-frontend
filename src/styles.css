@@ -1,8 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+/* You@import "tailwindcss"; can add global styles to this file, and also import other style files */
 
+@import "tailwindcss";
 * {
-  margin: 0;
-  padding: 0;
+
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
@@ -133,4 +133,23 @@ footer {
   color: #fff;
   text-align: center;
   padding: 20px;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Estilos para snackbars personalizados */
+.success-snackbar {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+.info-snackbar {
+  background-color: #3b82f6 !important;
+  color: white !important;
 }

@@ -1,68 +1,85 @@
-<section class="login-section">
-  <div class="login-container">
-    <h2>Iniciar Sesión 🔐</h2>
+<!-- src/app/pages/login/login.component.html -->
+<section class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <mat-card class="max-w-md w-full space-y-8 p-8 shadow-xl rounded-2xl">
+    <div class="text-center">
+      <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+        Iniciar Sesión 🔐
+      </h2>
+      <p class="mt-2 text-sm text-gray-600">
+        Accede a tu cuenta de PawCare
+      </p>
+    </div>
 
-    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-      @if (errorMessage()) {
-        <p class="error-message">{{ errorMessage() }}</p>
-      }
-
-      <div class="form-group">
-        <label for="email">Correo electrónico</label>
+    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>Correo electrónico</mat-label>
         <input
+          matInput
           type="email"
-          id="email"
           formControlName="email"
-          placeholder="Ingresa tu correo"
+          placeholder="tu@ejemplo.com"
           required
         >
-        @if (loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)) {
-          <div class="validation-error">
-            @if (loginForm.get('email')?.errors?.['required']) {
-              <span>El correo es obligatorio.</span>
-            }
-            @if (loginForm.get('email')?.errors?.['email']) {
-              <span>El formato del correo no es válido.</span>
-            }
-          </div>
-        }
-      </div>
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['required']">
+          El correo es obligatorio
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['email']">
+          Formato de correo inválido
+        </mat-error>
+      </mat-form-field>
 
-      <div class="form-group">
-        <label for="password">Contraseña</label>
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>Contraseña</mat-label>
         <input
-          type="password"
-          id="password"
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
           formControlName="password"
           placeholder="Ingresa tu contraseña"
           required
         >
-        @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)) {
-          <div class="validation-error">
-            @if (loginForm.get('password')?.errors?.['required']) {
-              <span>La contraseña es obligatoria.</span>
-            }
-            @if (loginForm.get('password')?.errors?.['minlength']) {
-              <span>La contraseña debe tener al menos 6 caracteres.</span>
-            }
-          </div>
-        }
-      </div>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hidePassword()"
+        >
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['required']">
+          La contraseña es obligatoria
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['minlength']">
+          Mínimo 6 caracteres
+        </mat-error>
+      </mat-form-field>
 
       <button
+        mat-raised-button
+        color="primary"
+        class="w-full py-3"
         type="submit"
-        class="btn primary"
         [disabled]="loginForm.invalid || loading()"
       >
-        @if (loading()) {
-          <span>Cargando...</span>
-        } @else {
-          <span>Entrar</span>
-        }
+        <div class="flex items-center justify-center">
+          <mat-spinner *ngIf="loading()" diameter="20" class="mr-2"></mat-spinner>
+          <span>{{ loading() ? 'INICIANDO SESIÓN...' : 'INICIAR SESIÓN' }}</span>
+        </div>
       </button>
 
-      <p class="register-link">¿No tienes cuenta? <a routerLink="/signin">Regístrate aquí</a></p>
+      <div class="text-center">
+        <p class="text-sm text-gray-600">
+          ¿No tienes cuenta?
+          <a
+            routerLink="/signin"
+            class="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+          >
+            Regístrate aquí
+          </a>
+        </p>
+      </div>
     </form>
-  </div>
+  </mat-card>
 </section>

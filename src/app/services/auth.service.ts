@@ -1,28 +1,58 @@
+// src/app/services/auth.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { LoginRequestDTO, LoginResponseDTO } from '../models/auth.models'; // Definiremos estos modelos
+import { Observable, tap } from 'rxjs';
+import { LoginRequestDTO, LoginResponseDTO, RegisterReponse, RegisterRequest } from '../models/auth.models';
 import { environment } from '../../environments/environment';
-// Asume un archivo de entorno
+import { UserStorageService } from './user-storage.service';
+import { NotificationService } from './notification.service';
+import { Router } from '@angular/router';
 
 @Injectable({
-  // 'root' hace que el servicio esté disponible en toda la aplicación (Angular moderno)
   providedIn: 'root'
 })
 export class AuthService {
-
   private http = inject(HttpClient);
+  private storage = inject(UserStorageService);
+  private notification = inject(NotificationService);
+  private router = inject(Router);
 
-  private apiUrl =  environment.apiUrl + '/auth'; // La URL base de tu API
+  private apiUrl = environment.apiUrl;
 
-  /**
-   * Envía la solicitud de inicio de sesión a la API.
-   * @param credentials Datos de inicio de sesión (email y password).
-   * @returns Un Observable con la respuesta de la API.
-   */
   login(credentials: LoginRequestDTO): Observable<LoginResponseDTO> {
-    return this.http.post<LoginResponseDTO>(`${this.apiUrl}/login`, credentials);
+    return this.http.post<LoginResponseDTO>(`${this.apiUrl}/auth/login`, credentials)
+      .pipe(
+        tap((response: LoginResponseDTO) => {
+          if (response.status === 200) {
+            this.storage.saveUser(response);
+            this.notification.showSuccess('¡Inicio de sesión exitoso!');
+            this.router.navigate(['/']);
+          }
+        })
+      );
   }
 
-  // Aquí podrías agregar métodos para guardar y obtener el token, etc.
+  register(credentials: RegisterRequest): Observable<RegisterReponse> {
+    return this.http.post<RegisterReponse>(`${this.apiUrl}/users/register`, credentials);
+  }
+
+  // Método para verificar si el usuario está autenticado
+  isAuthenticated(): boolean {
+    return this.storage.isLoggedIn();
+  }
+
+  // Método para cerrar sesión
+  logout(): void {
+    this.storage.clean();
+    this.notification.showInfo('Sesión cerrada correctamente');
+  }
+
+  // Obtener información del usuario actual
+  getCurrentUser() {
+    return this.storage.getUser();
+  }
+
+    getToken(): string | null {
+    return this.storage.getToken();
+  }
 }
